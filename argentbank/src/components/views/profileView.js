@@ -5,7 +5,6 @@ import AccountSection from '../profile/accountSection.js';
 import SetName from '../profile/setName.js';
 
 const ProfileView = () => {
-	// Uses the useState hook to initialize the editing state to false. This handles enabling the user's name editing mode.
 	const [editing, setEditing] = useState(false);
 	// Uses the useSelector hook to access the current user object in the Redux store's auth state.
 	const user = useSelector((state) => state.auth.user);
@@ -14,13 +13,11 @@ const ProfileView = () => {
 	// Uses the useSelector hook to access the isAuthenticated boolean value in the Redux store's auth state, indicating if the user is authenticated.
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-	// Defines the handleSaveName function to dispatch the updateUserProfile action and disable the editing mode.
 	const handleSaveName = (updatedUserData) => {
 		dispatch(updateUserProfile(updatedUserData)); // Dispatches the updateUserProfile action to update the user's data.
 		setEditing(false); // Uses setEditing to set the editing state to false and disable the name editing mode.
 	};
 
-	// Renders the profile view component
 	return (
 		<main className='main bg-dark'>
 			<div className='header'>

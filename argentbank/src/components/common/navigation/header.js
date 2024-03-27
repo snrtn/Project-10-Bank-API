@@ -45,7 +45,6 @@ const Header = () => {
 					<img className='main-nav-logo-image' src={logo} alt='Argent Bank' />
 					<h1 className='sr-only'>Argent Bank</h1>
 				</Link>
-				{/* Conditionally renders AuthLinks or UnauthLinks based on isAuthenticated */}
 				<div>{!isAuthenticated ? <UnauthLinks /> : <AuthLinks />}</div>
 			</nav>
 		</header>

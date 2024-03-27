@@ -13,7 +13,7 @@ const LoginView = () => {
 		rememberMe: false,
 	});
 	const [loginError, setLoginError] = useState('');
-	// Uses the useDispatch hook to dispatch Redux actions and useNavigate for navigation.
+	// Uses the useDispatch hook to dispatch Redux actions
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
@@ -38,11 +38,8 @@ const LoginView = () => {
 		}));
 	};
 
-	// Manages the login process when the user submits the form.
 	const handleSignIn = async (e) => {
-		// Prevents the default form action, typically page reloading.
 		e.preventDefault();
-		// Extracts email, password, and "remember me" option values from state.
 		const { userEmail, password, rememberMe } = credentials;
 
 		try {
@@ -61,13 +58,10 @@ const LoginView = () => {
 			const user = await fetchUserDetails(authToken);
 			// Dispatches the signIn action with the token and user information.
 			dispatch(signIn({ token: authToken, user }));
-			// Redirects the user to the profile page after successful login.
 			navigate('/profile');
 		} catch (error) {
-			// Manages connection errors and sets an appropriate error message.
 			let errorMessage = 'An unexpected error has occurred.';
 			if (error.response) {
-				// Customizes the error message based on the response status code.
 				switch (error.response.status) {
 					case 400:
 						errorMessage = 'Please check your email and password.';
@@ -76,13 +70,10 @@ const LoginView = () => {
 						errorMessage = 'Server problem, please try again later.';
 						break;
 					default:
-						// Does not set a specific message for other error codes.
 						errorMessage = error.message || errorMessage;
 				}
 			}
-			// Updates the state with the error message.
 			setLoginError(errorMessage);
-			// Displays the login error in the console.
 			console.error('Login error:', error);
 		}
 	};
@@ -108,15 +99,11 @@ const LoginView = () => {
 		return userResponse.data.body;
 	}
 
-	// Function to store the authentication token.
 	function storeAuthToken(token, rememberMe) {
-		// Stores the authentication token in localStorage or sessionStorage.
 		if (rememberMe) {
-			// If the "remember me" option is activated, the token is stored in localStorage.
 			localStorage.setItem('authToken', token);
 			localStorage.setItem('rememberMe', 'true');
 		} else {
-			// Otherwise, the token is stored in sessionStorage.
 			sessionStorage.setItem('authToken', token);
 		}
 	}

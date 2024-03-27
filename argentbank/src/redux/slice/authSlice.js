@@ -1,16 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// Defines the initial state. This state includes the user's authentication status, the token, and the user's information.
 const initialState = {
-	isAuthenticated: false, // Indicates if the user is authenticated
-	token: null, // The user's authentication token
-	user: null, // The user's information
+	isAuthenticated: false,
+	token: null,
+	user: null,
 };
 
-// Creates the authSlice. This slice manages the state related to user authentication.
 export const authSlice = createSlice({
-	name: 'auth', // The name of the slice
-	initialState, // The initial state of the slice
+	name: 'auth',
+	initialState,
 	reducers: {
 		// Reducers to modify the state
 		signIn: (state, action) => {

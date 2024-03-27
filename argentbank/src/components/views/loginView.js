@@ -44,15 +44,14 @@ const LoginView = () => {
 		try {
 			// Attempts to login using the API and retrieves the authentication token.
 			const authToken = await performLogin(userEmail, password);
-			// If the user chose to remember, the token is stored in localStorage, otherwise in sessionStorage.
+
 			storeAuthToken(authToken, rememberMe);
-			// If "remember me" is activated, login information is saved in localStorage.
 			if (rememberMe) {
 				storeLoginInfo(userEmail, password);
 			} else {
-				// If "remember me" is not activated, login information is removed from localStorage.
 				storeLoginInfoDelete();
 			}
+
 			// Retrieves user details using the token and updates the Redux store.
 			const user = await fetchUserDetails(authToken);
 			// Dispatches the signIn action with the token and user information.
@@ -94,7 +93,6 @@ const LoginView = () => {
 	async function fetchUserDetails(token) {
 		// Retrieves user details from the authentication token.
 		const userResponse = await fetchUserProfile(token);
-		// Returns the user information contained in the response.
 		return userResponse.data.body;
 	}
 

@@ -1,0 +1,136 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: 'Bank Argent API'
+host: 'localhost:3001'
+basePath: '/api/v1'
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /user/login:
+    post:
+      summary: 'Login'
+      description: 'API for Login'
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Login'
+      responses:
+        '200':
+          description: 'Login Successfully'
+          schema:
+            $ref: '#/definitions/LoginResponse'
+        '400':
+          description: 'Invalid Fields'
+        '500':
+          description: 'Internal Server Error'
+  /user/signup:
+    post:
+      summary: 'Signup'
+      description: 'API for Signup'
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: 'Signup Successfully'
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: 'Invalid Fields'
+        '500':
+          description: 'Internal Server Error'
+  /user/profile:
+    get:
+      summary: 'User Profile API'
+      description: 'API for fetching a user profile'
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+      responses:
+        '200':
+          description: 'User profile retrieved successfully'
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: 'Invalid Fields'
+        '500':
+          description: 'Internal Server Error'
+    put:
+      summary: 'User Profile API'
+      description: 'API for updating a user profile'
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserProfile'
+      responses:
+        '200':
+          description: 'User profile updated successfully'
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: 'Invalid Fields'
+        '500':
+          description: 'Internal Server Error'
+definitions:
+  User:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+  Login:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  ApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message:
+        type: string
+      body:
+        type: object
+        properties:
+          id:
+            type: string
+          email:
+            type: string
+  LoginResponse:
+    type: object
+    properties:
+      token:
+        type: string
+  UserProfile:
+    type: object
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string

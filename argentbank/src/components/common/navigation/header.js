@@ -8,7 +8,6 @@ import { faUserCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 const Header = () => {
 	// Uses the useSelector hook to access the authentication state from the redux store
 	const { isAuthenticated, user } = useSelector((state) => state.auth);
-	// Uses the useDispatch hook to obtain the dispatch function to send actions
 	const dispatch = useDispatch();
 
 	// Defines the handleSignOut function, which will be called upon logout

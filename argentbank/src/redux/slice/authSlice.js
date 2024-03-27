@@ -30,10 +30,5 @@ export const authSlice = createSlice({
 	},
 });
 
-// Exports the action creators created by the slice.
-// These functions can be used in components to dispatch actions.
 export const { signIn, signOut, updateUser } = authSlice.actions;
-
-// Exports the slice's reducer.
-// This reducer will be used by the Redux store.
 export default authSlice.reducer;

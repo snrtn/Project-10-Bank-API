@@ -13,7 +13,6 @@ const LoginView = () => {
 		rememberMe: false,
 	});
 	const [loginError, setLoginError] = useState('');
-	// Uses the useDispatch hook to dispatch Redux actions
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 

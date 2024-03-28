@@ -147,7 +147,7 @@ paths:
           description: 'Unauthorized. Invalid or missing token.'
         '500':
           description: 'Internal Server Error. Error occurred on the server.'
-  /user/profile/transactions/{transactionId}:
+    /user/profile/transactions/{transactionId}:
     get:
       tags:
         - Transactions
@@ -179,8 +179,6 @@ paths:
           description: 'Transaction not found.'
         '500':
           description: 'Internal Server Error. Error occurred on the server.'
-  # 새로 추가된 경로들:
-  /user/profile/transactions/{transactionId}:
     put:
       tags:
         - Transactions
@@ -246,6 +244,7 @@ paths:
           description: 'Transaction not found.'
         '500':
           description: 'Internal Server Error. Error occurred on the server.'
+
   /user/profile/transactions/monthly/{accountId}:
     get:
       tags:

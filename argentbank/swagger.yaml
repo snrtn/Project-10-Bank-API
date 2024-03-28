@@ -179,6 +179,103 @@ paths:
           description: 'Transaction not found.'
         '500':
           description: 'Internal Server Error. Error occurred on the server.'
+  # 새로 추가된 경로들:
+  /user/profile/transactions/{transactionId}:
+    put:
+      tags:
+        - Transactions
+      security:
+        - Bearer: []
+      summary: 'Update a specific transaction'
+      description: 'API endpoint for updating a specific transaction by its ID.'
+      parameters:
+        - in: header
+          name: Authorization
+          description: 'Bearer token for authorization'
+          required: true
+          type: 'string'
+        - in: path
+          name: transactionId
+          required: true
+          type: 'string'
+          description: 'The ID of the transaction to update'
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/TransactionUpdateRequest'
+      responses:
+        '200':
+          description: 'Transaction updated successfully.'
+          schema:
+            $ref: '#/definitions/TransactionUpdateResponse'
+        '400':
+          description: 'Invalid transaction ID or fields.'
+        '401':
+          description: 'Unauthorized. Invalid or missing token.'
+        '404':
+          description: 'Transaction not found.'
+        '500':
+          description: 'Internal Server Error. Error occurred on the server.'
+    delete:
+      tags:
+        - Transactions
+      security:
+        - Bearer: []
+      summary: 'Delete a specific transaction'
+      description: 'API endpoint for deleting a specific transaction by its ID.'
+      parameters:
+        - in: header
+          name: Authorization
+          description: 'Bearer token for authorization'
+          required: true
+          type: 'string'
+        - in: path
+          name: transactionId
+          required: true
+          type: 'string'
+          description: 'The ID of the transaction to delete'
+      responses:
+        '200':
+          description: 'Transaction deleted successfully.'
+        '400':
+          description: 'Invalid transaction ID.'
+        '401':
+          description: 'Unauthorized. Invalid or missing token.'
+        '404':
+          description: 'Transaction not found.'
+        '500':
+          description: 'Internal Server Error. Error occurred on the server.'
+  /user/profile/transactions/monthly/{accountId}:
+    get:
+      tags:
+        - Transactions
+      security:
+        - Bearer: []
+      summary: 'Retrieve transactions for the current month by account ID'
+      description: 'API endpoint for fetching all transactions for the current month, grouped by account ID.'
+      parameters:
+        - in: header
+          name: Authorization
+          description: 'Bearer token for authorization'
+          required: true
+          type: 'string'
+        - in: path
+          name: accountId
+          required: true
+          type: 'string'
+          description: 'Account ID to filter transactions'
+      responses:
+        '200':
+          description: 'Transactions for the current month retrieved successfully.'
+          schema:
+            type: 'array'
+            items:
+              $ref: '#/definitions/TransactionResponse'
+        '401':
+          description: 'Unauthorized. Invalid or missing token.'
+        '500':
+          description: 'Internal Server Error. Error occurred on the server.'
 definitions:
   LoginRequest:
     type: object

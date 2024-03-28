@@ -62,14 +62,22 @@ const LoginView = () => {
 			if (error.response) {
 				switch (error.response.status) {
 					case 400:
-						errorMessage = 'Please check your email and password.';
+						errorMessage = 'Bad request. Please check your email and password.';
+						break;
+					case 401:
+						errorMessage = 'Unauthorized. Please verify your credentials.';
+						break;
+					case 404:
+						errorMessage = 'User not found. Please check your email.';
 						break;
 					case 500:
-						errorMessage = 'Server problem, please try again later.';
+						errorMessage = 'Server error. Please try again later.';
 						break;
 					default:
-						errorMessage = error.message || errorMessage;
+						errorMessage = error.message || 'Something went wrong. Please try again.';
 				}
+			} else if (error.message) {
+				errorMessage = error.message;
 			}
 			setLoginError(errorMessage);
 			console.error('Login error:', error);

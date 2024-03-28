@@ -4,29 +4,46 @@ import { updateUserProfileApi } from '../../service/apiServices';
 const SetName = ({ user, onSave, onCancel }) => {
 	const [firstName, setFirstName] = useState(user.firstName);
 	const [lastName, setLastName] = useState(user.lastName);
+	const [error, setError] = useState('');
 
-	// Defines a function to handle input changes, updating the state with the new value.
 	const handleInputChange = (setter) => (e) => {
 		setter(e.target.value);
 	};
 
-	// Defines an asynchronous function to handle saving changes.
 	const handleSave = async () => {
 		try {
-			// Retrieves the authentication token from localStorage or sessionStorage.
 			const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-			// Calls updateUserProfileApi to update the profile with the new first and last names, using the token.
 			const response = await updateUserProfileApi({ firstName, lastName }, token);
-			console.log('Success:', response.data);
-			// Calls the onSave function passed as a prop with the new first and last names.
+			console.log('Success:', response);
 			onSave({ firstName, lastName });
 		} catch (error) {
+			if (error.response) {
+				switch (error.response.status) {
+					case 400:
+						setError('Invalid request. Please check the data.');
+						break;
+					case 401:
+						setError('Unauthorized. Please log in again.');
+						break;
+					case 404:
+						setError('Profile not found. Please try again.');
+						break;
+					case 500:
+						setError('Server error. Please try again later.');
+						break;
+					default:
+						setError('An unexpected error occurred.');
+				}
+			} else {
+				setError('Network error. Please check your internet connection.');
+			}
 			console.error('Error:', error);
 		}
 	};
 
 	return (
 		<div className='set-name-container'>
+			{error && <p className='error'>{error}</p>}
 			<div className='set-name-input'>
 				<input type='text' placeholder='First Name' value={firstName} onChange={handleInputChange(setFirstName)} />
 				<input type='text' placeholder='Last Name' value={lastName} onChange={handleInputChange(setLastName)} />

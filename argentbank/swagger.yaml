@@ -10,9 +10,16 @@ consumes:
   - application/json
 produces:
   - application/json
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 paths:
   /user/login:
     post:
+      tags:
+        - User Module
       summary: 'Login'
       description: 'API for Login'
       parameters:
@@ -20,18 +27,24 @@ paths:
           name: body
           required: true
           schema:
-            $ref: '#/definitions/Login'
+            $ref: '#/definitions/LoginRequest'
       responses:
         '200':
-          description: 'Login Successfully'
+          description: 'Login Successfully. User authenticated and token returned.'
           schema:
             $ref: '#/definitions/LoginResponse'
         '400':
-          description: 'Invalid Fields'
+          description: 'Invalid Fields. Required fields are missing or invalid.'
+        '401':
+          description: 'Unauthorized due to invalid credentials.'
+        '404':
+          description: 'User not found.'
         '500':
-          description: 'Internal Server Error'
+          description: 'Internal Server Error. Error occurred on the server.'
   /user/signup:
     post:
+      tags:
+        - User Module
       summary: 'Signup'
       description: 'API for Signup'
       parameters:
@@ -39,18 +52,26 @@ paths:
           name: body
           required: true
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/RegisterRequest'
       responses:
         '200':
-          description: 'Signup Successfully'
+          description: 'Signup Successfully. User registered and token returned.'
           schema:
-            $ref: '#/definitions/ApiResponse'
+            $ref: '#/definitions/RegisterResponse'
         '400':
-          description: 'Invalid Fields'
+          description: 'Invalid Fields. Required fields are missing or invalid.'
+        '401':
+          description: 'Unauthorized due to invalid or missing token.'
+        '404':
+          description: 'Page not found.'
         '500':
-          description: 'Internal Server Error'
+          description: 'Internal Server Error. Error occurred on the server.'
   /user/profile:
     get:
+      tags:
+        - User Module
+      security:
+        - Bearer: []
       summary: 'User Profile API'
       description: 'API for fetching a user profile'
       parameters:
@@ -60,14 +81,22 @@ paths:
           required: true
       responses:
         '200':
-          description: 'User profile retrieved successfully'
+          description: 'User profile retrieved successfully.'
           schema:
-            $ref: '#/definitions/ApiResponse'
+            $ref: '#/definitions/ProfileResponse'
         '400':
-          description: 'Invalid Fields'
+          description: 'Invalid Fields. Required fields are missing or invalid.'
+        '401':
+          description: 'Unauthorized. Invalid or missing token.'
+        '404':
+          description: 'User Not Found.'
         '500':
-          description: 'Internal Server Error'
+          description: 'Internal Server Error. Error occurred on the server.'
     put:
+      tags:
+        - User Module
+      security:
+        - Bearer: []
       summary: 'User Profile API'
       description: 'API for updating a user profile'
       parameters:
@@ -79,58 +108,268 @@ paths:
           name: body
           required: true
           schema:
-            $ref: '#/definitions/UserProfile'
+            $ref: '#/definitions/ProfileUpdateRequest'
       responses:
         '200':
-          description: 'User profile updated successfully'
+          description: 'User profile updated successfully.'
           schema:
-            $ref: '#/definitions/ApiResponse'
+            $ref: '#/definitions/ProfileUpdateResponse'
         '400':
-          description: 'Invalid Fields'
+          description: 'Invalid Fields. Required fields are missing or invalid.'
+        '401':
+          description: 'Unauthorized. Invalid or missing token.'
+        '404':
+          description: 'User Not Found.'
         '500':
-          description: 'Internal Server Error'
+          description: 'Internal Server Error. Error occurred on the server.'
+  /user/profile/transactions:
+    get:
+      tags:
+        - Transactions
+      security:
+        - Bearer: []
+      summary: 'Retrieve all transactions for the user'
+      description: 'API endpoint for fetching all transactions associated with the user.'
+      parameters:
+        - in: header
+          name: Authorization
+          description: 'Bearer token for authorization'
+          required: true
+          type: 'string'
+      responses:
+        '200':
+          description: 'Transactions retrieved successfully.'
+          schema:
+            type: 'array'
+            items:
+              $ref: '#/definitions/TransactionResponse'
+        '401':
+          description: 'Unauthorized. Invalid or missing token.'
+        '500':
+          description: 'Internal Server Error. Error occurred on the server.'
+  /user/profile/transactions/{transactionId}:
+    get:
+      tags:
+        - Transactions
+      security:
+        - Bearer: []
+      summary: 'Retrieve a specific transaction'
+      description: 'API endpoint for fetching a specific transaction by its ID.'
+      parameters:
+        - in: header
+          name: Authorization
+          description: 'Bearer token for authorization'
+          required: true
+          type: 'string'
+        - in: path
+          name: transactionId
+          required: true
+          type: 'string'
+          description: 'The ID of the transaction to retrieve'
+      responses:
+        '200':
+          description: 'Transaction retrieved successfully.'
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '400':
+          description: 'Invalid transaction ID.'
+        '401':
+          description: 'Unauthorized. Invalid or missing token.'
+        '404':
+          description: 'Transaction not found.'
+        '500':
+          description: 'Internal Server Error. Error occurred on the server.'
 definitions:
-  User:
+  LoginRequest:
     type: object
     properties:
       email:
         type: string
+        format: email
+        description: User's email
+        example: j.doe@example.com
       password:
         type: string
-      firstName:
-        type: string
-      lastName:
-        type: string
-  Login:
-    type: object
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-  ApiResponse:
+        format: password
+        description: User's password
+        example: securePass123
+  LoginResponse:
     type: object
     properties:
       status:
         type: integer
+        description: Response code from the API
+        example: 200
       message:
         type: string
+        description: Message from the API
+        example: 'Login successful.'
       body:
         type: object
         properties:
-          id:
+          token:
             type: string
-          email:
-            type: string
-  LoginResponse:
+            description: Token created by the API
+            example: 'eyJhbG...snipped...KQssw5c'
+  RegisterRequest:
     type: object
     properties:
-      token:
+      email:
         type: string
-  UserProfile:
+        format: email
+        description: User's email
+        example: new_user@example.com
+      password:
+        type: string
+        format: password
+        description: User's password
+        example: newPassword!
+      lastName:
+        type: string
+        description: User's last name
+        example: User
+      firstName:
+        type: string
+        description: User's first name
+        example: New
+  RegisterResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        description: Response code from the API
+        example: 201
+      message:
+        type: string
+        description: Response message from the API
+        example: 'User successfully registered.'
+      body:
+        type: object
+        properties:
+          _id:
+            type: string
+            format: uuid
+            description: User's UUID
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          email:
+            type: string
+            format: email
+            description: User's email
+            example: new_user@example.com
+  ProfileResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        description: Response status code from the API
+        example: 200
+      message:
+        type: string
+        description: Response message from the API
+        example: 'Profile retrieved.'
+      body:
+        type: object
+        properties:
+          email:
+            type: string
+            format: email
+            description: User's email
+            example: j.doe@example.com
+  ProfileUpdateRequest:
     type: object
     properties:
       firstName:
         type: string
+        description: Updated first name
+        example: John
       lastName:
         type: string
+        description: Updated last name
+        example: Doe
+  ProfileUpdateResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        description: Response code from the API
+        example: 200
+      message:
+        type: string
+        description: Response message from the API
+        example: 'Profile updated successfully.'
+  TransactionResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 200
+      message:
+        type: string
+        example: 'Transaction details retrieved.'
+      transaction:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+            description: Transaction's UUID
+            example: 'abcd1234-5678-90ef-a123-456789abcdef'
+          date:
+            type: string
+            format: date-time
+            description: Transaction date
+            example: '2023-03-15T10:00:00Z'
+          description:
+            type: string
+            description: Transaction description
+            example: 'Grocery shopping'
+          amount:
+            type: integer
+            description: Amount in cents
+            example: 2599
+          balance:
+            type: integer
+            description: Balance after transaction
+            example: 102300
+          type:
+            type: string
+            description: Transaction type
+            example: 'debit'
+          category:
+            type: string
+            description: Category of transaction
+            example: 'Groceries'
+          notes:
+            type: string
+            description: Additional notes
+            example: 'Whole Foods purchase'
+  TransactionUpdateRequest:
+    type: object
+    properties:
+      category:
+        type: string
+        description: Updated category
+        example: 'Utilities'
+      notes:
+        type: string
+        description: Additional notes
+        example: 'Electric bill payment'
+  TransactionUpdateResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        description: Response status code
+        example: 200
+      message:
+        type: string
+        description: Response message
+        example: 'Transaction updated successfully.'
+      transaction:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+            description: Updated transaction's UUID
+            example: 'abcd1234-5678-90ef-a123-456789abcdef'
